@@ -12,8 +12,19 @@ services:
     volumes:
       - .:/usr/src/baguette-store
       - ./node_modules:/usr/src/baguette-store/node_modules
+    links:
+      - postgres
 
-networks:
-  default:
-    external: true
-    name: test-network
+  postgres:
+    image: postgres:12.5
+    environment:
+      POSTGRES_DB: baguette-store
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - 5432:5432
+    volumes:
+     - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data: {}
