@@ -4,7 +4,6 @@ import { APP_FILTER } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BaguettesController } from 'api/controllers/baguettes.controller';
-import { BaguettesConditionTask } from 'domain/scheduler/baguettesCondition.task';
 import { BaguettesService } from 'domain/services/baguettes.service';
 import { AllExceptionsFilter } from 'handlers/all-exceptions.filter';
 import { Baguette } from 'persistence/entities/baguette.entity';
@@ -23,7 +22,6 @@ import { BaguettesRepositoryAccesPoint } from 'persistence/repositories/baguette
     },
     BaguettesService,
     BaguettesRepositoryAccesPoint,
-    BaguettesConditionTask,
   ],
   controllers: [BaguettesController],
 })
