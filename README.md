@@ -1,8 +1,8 @@
-# Baguette-store
+# Baguettes-store
 
 ## Description
 
-Baguette-store is a simple api for managing and tracking your hand crafted baguettes.
+Baguettes-store is a simple api for managing and tracking your hand crafted baguettes.
 
 ## Installation
 
@@ -42,4 +42,4 @@ $ npm run test:cov
 
 ## License
 
-Baguette-store is [WTFPL licensed](LICENSE)
+Baguettes-store is [WTFPL licensed](LICENSE)

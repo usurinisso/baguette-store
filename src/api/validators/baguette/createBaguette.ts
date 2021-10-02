@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDefined, IsEnum, IsInt, IsNotEmpty, IsNumber, IsPositive, ValidateIf } from 'class-validator';
-import { BaguetteCondition } from 'persistence/entities/enums/baguetteCondition.enum';
-import { BaguetteType } from 'persistence/entities/enums/baguetteType.enum';
+import { BaguetteCondition } from 'types/baguetteCondition';
+import { BaguetteType } from 'types/baguetteType';
 
-export class CreateBaguetteDto {
+export class CreateBaguette {
   @ApiProperty({ example: '20.0', description: 'Price of the baguette' })
   @IsDefined()
   @IsNotEmpty()
@@ -20,7 +20,7 @@ export class CreateBaguetteDto {
 
   @ApiProperty({
     enum: BaguetteType,
-    enumName: 'Baguette type',
+    enumName: 'Baguettes type',
   })
   @ValidateIf((o) => 'type' in o)
   @IsDefined()
@@ -30,19 +30,11 @@ export class CreateBaguetteDto {
 
   @ApiProperty({
     enum: BaguetteCondition,
-    enumName: 'Baguette condition',
+    enumName: 'Baguettes condition',
   })
   @ValidateIf((o) => 'condition' in o)
   @IsDefined()
   @IsNotEmpty()
   @IsEnum(BaguetteCondition)
   condition: BaguetteCondition;
-
-  toString(): string {
-    return (
-      '\n{\n' +
-      `  price: ${this.price},\n  sizeCm: ${this.sizeCm},\n  type: ${this.type},\n  condition: ${this.condition}\n` +
-      '}\n'
-    );
-  }
 }

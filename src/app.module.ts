@@ -1,28 +1,25 @@
-import { Module } from '@nestjs/common';
+import { Abstract, FactoryProvider, Module } from '@nestjs/common';
+import { Type } from '@nestjs/common/interfaces/type.interface';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER } from '@nestjs/core';
-import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BaguettesController } from 'api/controllers/baguettes.controller';
-import { BaguettesService } from 'domain/services/baguettes.service';
-import { AllExceptionsFilter } from 'handlers/all-exceptions.filter';
-import { Baguette } from 'persistence/entities/baguette.entity';
-import { BaguettesRepositoryAccesPoint } from 'persistence/repositories/baguettes.repository';
+import { BaguetteRepository } from 'infrastructure/persistence/repositories/baguettes.repository';
+import { BaguetteService } from 'services/baguette';
+
 @Module({
-  imports: [
-    ConfigModule.forRoot(),
-    TypeOrmModule.forRoot(),
-    ScheduleModule.forRoot(),
-    TypeOrmModule.forFeature([Baguette]),
-  ],
-  providers: [
-    {
-      provide: APP_FILTER,
-      useClass: AllExceptionsFilter,
-    },
-    BaguettesService,
-    BaguettesRepositoryAccesPoint,
-  ],
+  imports: [ConfigModule.forRoot(), TypeOrmModule.forRoot(), TypeOrmModule.forFeature([BaguetteRepository])],
+  providers: [factory(BaguetteService, [BaguetteRepository])],
   controllers: [BaguettesController],
 })
 export class AppModule {}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+type Deps = Array<Type<unknown> | string | symbol | Abstract<unknown> | Function>;
+
+function factory<T>(Clazz: Type<T>, deps: Deps): FactoryProvider<T> {
+  return {
+    provide: Clazz,
+    useFactory: (...args) => new Clazz(...args),
+    inject: deps,
+  };
+}

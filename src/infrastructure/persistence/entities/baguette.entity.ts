@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
-import { BaguetteCondition } from 'persistence/entities/enums/baguetteCondition.enum';
-import { BaguetteType } from 'persistence/entities/enums/baguetteType.enum';
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BaguetteCondition } from 'types/baguetteCondition';
+import { BaguetteType } from 'types/baguetteType';
 @Entity()
 export class Baguette {
   @PrimaryGeneratedColumn()
