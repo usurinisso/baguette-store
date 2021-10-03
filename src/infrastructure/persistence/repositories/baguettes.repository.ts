@@ -1,7 +1,7 @@
 import { Baguettes } from 'capabilities/baguettes';
 import { BaguetteNotFoundError } from 'exceptions/baguette-not-found';
 import { FullBaguette } from 'models/baguette';
-import { DeleteResult, EntityRepository, Repository, UpdateResult } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 import { CreateBaguette } from 'validators/baguette/createBaguette';
 import { UpdateBaguette } from 'validators/baguette/updateBaguette';
 
@@ -19,6 +19,7 @@ export class BaguetteRepository extends Repository<Baguette> implements Baguette
     if (!baguette) {
       throw new BaguetteNotFoundError();
     }
+
     return baguette;
   }
 
@@ -26,11 +27,30 @@ export class BaguetteRepository extends Repository<Baguette> implements Baguette
     return await this.save(baguette);
   }
 
-  async updateEntity(id: number | number[], baguette: UpdateBaguette): Promise<UpdateResult> {
-    return await this.update(id, baguette);
+  async updateEntity(id: number, baguette: UpdateBaguette): Promise<FullBaguette> {
+    const baguetteToUpdate = await this.findOne(id);
+
+    if (!baguetteToUpdate) {
+      throw new BaguetteNotFoundError();
+    }
+
+    baguetteToUpdate.type = baguette.type ?? baguetteToUpdate.type;
+    baguetteToUpdate.price = baguette.price ?? baguetteToUpdate.price;
+    baguetteToUpdate.sizeCm = baguette.sizeCm ?? baguetteToUpdate.sizeCm;
+    baguetteToUpdate.condition = baguette.condition ?? baguetteToUpdate.condition;
+
+    await this.save(baguetteToUpdate);
+
+    return await this.findOne(id);
   }
 
-  async deleteEntity(id: number): Promise<DeleteResult> {
-    return await this.delete(id);
+  async deleteEntity(id: number): Promise<void> {
+    const baguette = await this.findOne(id);
+
+    if (!baguette) {
+      throw new BaguetteNotFoundError();
+    }
+
+    await this.delete(id);
   }
 }

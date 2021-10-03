@@ -1,5 +1,4 @@
 import { FullBaguette } from 'models/baguette';
-import { DeleteResult, UpdateResult } from 'typeorm';
 import { CreateBaguette } from 'validators/baguette/createBaguette';
 import { UpdateBaguette } from 'validators/baguette/updateBaguette';
 
@@ -10,7 +9,7 @@ export interface Baguettes {
 
   createEntity(baguette: CreateBaguette): Promise<FullBaguette>;
 
-  updateEntity(id: number | number[], baguette: UpdateBaguette): Promise<UpdateResult>;
+  updateEntity(id: number | number[], baguette: UpdateBaguette): Promise<FullBaguette>;
 
-  deleteEntity(id: number): Promise<DeleteResult>;
+  deleteEntity(id: number): Promise<void>;
 }

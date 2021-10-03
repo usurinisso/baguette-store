@@ -4,14 +4,14 @@ import { BaguetteCondition } from 'types/baguetteCondition';
 import { BaguetteType } from 'types/baguetteType';
 
 export class CreateBaguette {
-  @ApiProperty({ example: '20.0', description: 'Price of the baguette' })
+  @ApiProperty({ example: 20.0, type: Number })
   @IsDefined()
   @IsNotEmpty()
   @IsNumber()
   @IsPositive()
   price: number;
 
-  @ApiProperty({ example: 25, description: 'Size (length) of the baguette (integer)' })
+  @ApiProperty({ example: 25, type: Number })
   @IsDefined()
   @IsNotEmpty()
   @IsInt()
@@ -21,6 +21,7 @@ export class CreateBaguette {
   @ApiProperty({
     enum: BaguetteType,
     enumName: 'Baguettes type',
+    example: 1,
   })
   @ValidateIf((o) => 'type' in o)
   @IsDefined()
@@ -31,6 +32,7 @@ export class CreateBaguette {
   @ApiProperty({
     enum: BaguetteCondition,
     enumName: 'Baguettes condition',
+    example: 1,
   })
   @ValidateIf((o) => 'condition' in o)
   @IsDefined()
