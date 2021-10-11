@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -26,7 +25,7 @@ import { UpdateBaguette } from 'validators/baguette/updateBaguette';
 
 @ApiTags('baguettes')
 @Controller('baguettes')
-@UsePipes(new ValidationPipe({ transform: true }))
+@UsePipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
 @UseFilters(new ApiErrorFilter())
 export class BaguettesController {
   constructor(private readonly baguettesService: BaguetteService) {}
