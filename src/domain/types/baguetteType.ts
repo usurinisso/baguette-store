@@ -1,6 +1,6 @@
 export enum BaguetteType {
-  'Whole grain' = 1,
-  'White' = 2,
-  'Garlic' = 3,
-  'Cheesy' = 4,
+  'Whole grain' = 'Whole grain',
+  'White' = 'White',
+  'Garlic' = 'Garlic',
+  'Cheesy' = 'Cheesy',
 }

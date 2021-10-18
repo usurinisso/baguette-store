@@ -1,15 +1,44 @@
-import { FullBaguette } from 'models/baguette';
-import { CreateBaguette } from 'validators/baguette/createBaguette';
-import { UpdateBaguette } from 'validators/baguette/updateBaguette';
+import { BaguetteWithCartsAndShopAndOrder, FullBaguette } from 'models/baguette';
+import { FullShop } from 'models/shops';
+import { BaguetteCondition } from 'types/baguetteCondition';
+import { BaguetteType } from 'types/baguetteType';
+import { CreateBaguetteBody } from 'validators/baguette/createBaguetteBody';
+import { UpdateBaguetteBody } from 'validators/baguette/updateBaguetteBody';
 
 export interface Baguettes {
-  findAllEntities(): Promise<FullBaguette[]>;
+  findAllEntities(shop: FullShop): Promise<FullBaguette[]>;
 
-  findOneEntity(id: number): Promise<FullBaguette>;
+  findOneEntity(shop: FullShop, id: number): Promise<FullBaguette>;
 
-  createEntity(baguette: CreateBaguette): Promise<FullBaguette>;
+  createEntity(shop: FullShop, baguette: CreateBaguetteBody): Promise<FullBaguette>;
 
-  updateEntity(id: number | number[], baguette: UpdateBaguette): Promise<FullBaguette>;
+  updateEntity(shop: FullShop, id: number | number[], baguette: UpdateBaguetteBody): Promise<FullBaguette>;
 
-  deleteEntity(id: number): Promise<void>;
+  deleteEntity(shop: FullShop, id: number): Promise<void>;
+
+  findManyByIds(ids: number[]): Promise<BaguetteWithCartsAndShopAndOrder[]>;
+}
+
+export interface CreateBaguette {
+  price: number;
+
+  sizeCm: number;
+
+  description: string;
+
+  type: BaguetteType;
+
+  condition: BaguetteCondition;
+}
+
+export interface UpdateBaguette {
+  price?: number;
+
+  sizeCm?: number;
+
+  description?: string;
+
+  type?: BaguetteType;
+
+  condition?: BaguetteCondition;
 }

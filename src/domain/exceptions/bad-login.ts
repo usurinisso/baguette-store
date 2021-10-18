@@ -1,5 +1,5 @@
-export class BaguetteNotFoundError extends Error {
-  constructor(message = 'Baguette Not Found') {
+export class BadLoginError extends Error {
+  constructor(message = 'Username or password incorrect') {
     super(message);
 
     Object.setPrototypeOf(this, new.target.prototype);

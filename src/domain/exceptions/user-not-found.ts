@@ -1,5 +1,5 @@
-export class BaguetteNotFoundError extends Error {
-  constructor(message = 'Baguette Not Found') {
+export class UserNotFoundError extends Error {
+  constructor(message = 'User Not Found') {
     super(message);
 
     Object.setPrototypeOf(this, new.target.prototype);

@@ -1,36 +1,44 @@
 import { Logger } from '@nestjs/common';
-import { Baguettes } from 'capabilities/baguettes';
+import { Baguettes, CreateBaguette, UpdateBaguette } from 'capabilities/baguettes';
 import { FullBaguette } from 'models/baguette';
-import { Baguette } from 'resources/baguette/baguette';
-import { CreateBaguette } from 'validators/baguette/createBaguette';
-import { UpdateBaguette } from 'validators/baguette/updateBaguette';
+import { ShopService } from 'services/shop';
 
 export class BaguetteService {
-  constructor(private readonly baguettes: Baguettes) {}
+  constructor(private readonly baguettes: Baguettes, private readonly shops: ShopService) {}
   private readonly logger = new Logger();
 
-  async deleteBaguette(id: number): Promise<void> {
+  async deleteBaguette(shopId: number, id: number): Promise<void> {
     this.logger.debug('Service deleteBaguette() id - ' + id);
-    await this.baguettes.deleteEntity(id);
+    const shop = await this.shops.findOneShop(shopId);
+
+    await this.baguettes.deleteEntity(shop, id);
   }
 
-  async updateBaguette(id: number | number[], baguette: UpdateBaguette): Promise<FullBaguette> {
+  async updateBaguette(shopId: number, id: number | number[], baguette: UpdateBaguette): Promise<FullBaguette> {
     this.logger.debug('Service updateBaguette() id - ' + id, baguette);
-    return await this.baguettes.updateEntity(id, baguette);
+    const shop = await this.shops.findOneShop(shopId);
+
+    return await this.baguettes.updateEntity(shop, id, baguette);
   }
 
-  async createBaguette(baguette: CreateBaguette): Promise<Baguette> {
+  async createBaguette(shopId: number, baguette: CreateBaguette): Promise<FullBaguette> {
     this.logger.debug('Service createBaguette()');
-    return await this.baguettes.createEntity(baguette);
+    const shop = await this.shops.findOneShop(shopId);
+
+    return await this.baguettes.createEntity(shop, baguette);
   }
 
-  async findOneBaguette(id: number): Promise<Baguette> {
+  async findOneBaguette(shopId: number, id: number): Promise<FullBaguette> {
     this.logger.debug('Service findOneBaguette() id - ' + id);
-    return await this.baguettes.findOneEntity(id);
+    const shop = await this.shops.findOneShop(shopId);
+
+    return await this.baguettes.findOneEntity(shop, id);
   }
 
-  async findAllBaguettes(): Promise<Baguette[]> {
+  async findAllBaguettes(shopId: number): Promise<FullBaguette[]> {
     this.logger.debug('Service findAllBaguettes()');
-    return await this.baguettes.findAllEntities();
+    const shop = await this.shops.findOneShop(shopId);
+
+    return await this.baguettes.findAllEntities(shop);
   }
 }

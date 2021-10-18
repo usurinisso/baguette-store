@@ -13,66 +13,80 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiErrorFilter } from 'exception/api-error-filter';
 import { ErrorStatus } from 'exception/error-status';
 import { BaguetteNotFoundError } from 'exceptions/baguette-not-found';
-import { Baguette } from 'resources/baguette/baguette';
+import { ShopNotFoundError } from 'exceptions/shop-not-found';
+import { Baguette } from 'resources/baguette';
 import { HttpErrorItem } from 'resources/http-error-item';
 import { BaguetteService } from 'services/baguette';
-import { CreateBaguette } from 'validators/baguette/createBaguette';
-import { UpdateBaguette } from 'validators/baguette/updateBaguette';
+import { CreateBaguetteBody } from 'validators/baguette/createBaguetteBody';
+import { UpdateBaguetteBody } from 'validators/baguette/updateBaguetteBody';
 
 @ApiTags('baguettes')
-@Controller('baguettes')
+@Controller('shops')
 @UsePipes(new ValidationPipe({ transform: true, whitelist: true, forbidNonWhitelisted: true }))
 @UseFilters(new ApiErrorFilter())
 export class BaguettesController {
   constructor(private readonly baguettesService: BaguetteService) {}
 
-  @Get('/:id')
+  @Get('/:shopId/baguettes/:id')
   @ApiResponse({ status: HttpStatus.OK, type: Baguette })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: HttpErrorItem })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   @ErrorStatus(BaguetteNotFoundError, HttpStatus.NOT_FOUND)
-  async getOne(@Param('id', ParseIntPipe) id: number): Promise<Baguette> {
-    return await this.baguettesService.findOneBaguette(id);
+  @ErrorStatus(ShopNotFoundError, HttpStatus.NOT_FOUND)
+  async getOne(
+    @Param('shopId', ParseIntPipe) shopId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Baguette> {
+    return await this.baguettesService.findOneBaguette(shopId, id);
   }
 
-  @Get()
+  @Get('/:shopId/baguettes')
   @ApiResponse({ status: HttpStatus.OK, type: [Baguette] })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
-  async getAll(): Promise<Baguette[]> {
-    return await this.baguettesService.findAllBaguettes();
+  @ErrorStatus(ShopNotFoundError, HttpStatus.NOT_FOUND)
+  async getAll(@Param('shopId', ParseIntPipe) shopId: number): Promise<Baguette[]> {
+    return await this.baguettesService.findAllBaguettes(shopId);
   }
 
-  @Post()
+  @Post('/:shopId/baguettes')
   @ApiResponse({ status: HttpStatus.CREATED, type: Baguette })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: HttpErrorItem })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
-  async post(@Body() baguette: CreateBaguette): Promise<Baguette> {
-    return await this.baguettesService.createBaguette(baguette);
+  @ErrorStatus(ShopNotFoundError, HttpStatus.NOT_FOUND)
+  async post(@Param('shopId', ParseIntPipe) shopId: number, @Body() baguette: CreateBaguetteBody): Promise<Baguette> {
+    return await this.baguettesService.createBaguette(shopId, baguette);
   }
 
-  @Patch(':id')
-  @ApiResponse({ status: HttpStatus.OK, type: UpdateBaguette })
+  @Patch('/:shopId/baguettes/:id')
+  @ApiResponse({ status: HttpStatus.OK, type: UpdateBaguetteBody })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: HttpErrorItem })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
   @ErrorStatus(BaguetteNotFoundError, HttpStatus.NOT_FOUND)
-  @ApiBody({ type: UpdateBaguette })
-  async patch(@Param('id', ParseIntPipe) id: number, @Body() baguette: UpdateBaguette): Promise<Baguette> {
-    return await this.baguettesService.updateBaguette(id, baguette);
+  @ErrorStatus(ShopNotFoundError, HttpStatus.NOT_FOUND)
+  async patch(
+    @Param('shopId', ParseIntPipe) shopId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() baguette: UpdateBaguetteBody,
+  ): Promise<Baguette> {
+    return await this.baguettesService.updateBaguette(shopId, id, baguette);
   }
 
-  @Delete(':id')
+  @Delete('/:shopId/baguettes/:id')
   @ApiResponse({ status: HttpStatus.NO_CONTENT })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   @ErrorStatus(BaguetteNotFoundError, HttpStatus.NOT_FOUND)
+  @ErrorStatus(ShopNotFoundError, HttpStatus.NOT_FOUND)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    await this.baguettesService.deleteBaguette(id);
+  async delete(@Param('shopId', ParseIntPipe) shopId: number, @Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.baguettesService.deleteBaguette(shopId, id);
   }
 }

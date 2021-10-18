@@ -1,6 +1,6 @@
 export enum BaguetteCondition {
-  'Hot and fresh' = 1,
-  'Fresh' = 2,
-  'Hard' = 3,
-  'Stale' = 4,
+  'Hot and fresh' = 'Hot and fresh',
+  'Fresh' = 'Fresh',
+  'Hard' = 'Hard',
+  'Stale' = 'Stale',
 }

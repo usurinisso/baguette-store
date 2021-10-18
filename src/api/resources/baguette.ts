@@ -1,21 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDefined, IsEnum, IsInt, IsNotEmpty, IsNumber, IsPositive, ValidateIf } from 'class-validator';
+import { DateTime } from 'luxon';
 import { BaguetteCondition } from 'types/baguetteCondition';
 import { BaguetteType } from 'types/baguetteType';
 
-export class CreateBaguette {
+export class Baguette {
   @ApiProperty({ example: 20.0, type: Number })
-  @IsDefined()
-  @IsNotEmpty()
-  @IsNumber()
-  @IsPositive()
   price: number;
 
   @ApiProperty({ example: 25, type: Number })
-  @IsDefined()
-  @IsNotEmpty()
-  @IsInt()
-  @IsPositive()
   sizeCm: number;
 
   @ApiProperty({
@@ -23,20 +15,18 @@ export class CreateBaguette {
     enumName: 'Baguettes type',
     example: 1,
   })
-  @ValidateIf((o) => 'type' in o)
-  @IsDefined()
-  @IsNotEmpty()
-  @IsEnum(BaguetteType)
   type: BaguetteType;
+
+  @ApiProperty({ type: String, example: 'A very delicious baguette from italy' })
+  description: string;
 
   @ApiProperty({
     enum: BaguetteCondition,
     enumName: 'Baguettes condition',
     example: 1,
   })
-  @ValidateIf((o) => 'condition' in o)
-  @IsDefined()
-  @IsNotEmpty()
-  @IsEnum(BaguetteCondition)
   condition: BaguetteCondition;
+
+  @ApiProperty({ example: DateTime.now(), type: DateTime })
+  bakedAt: DateTime;
 }
