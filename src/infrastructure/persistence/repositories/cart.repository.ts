@@ -1,15 +1,15 @@
 import { Carts, CreateCart } from 'capabilities/carts';
 import { CartNotFoundError } from 'exceptions/cart-not-found';
 import { Cart } from 'infrastructure/persistence/entities/cart.entity';
-import { BaguetteWithCartsAndShopAndOrder, FullBaguette } from 'models/baguette';
-import { CartWithBaguettes, CartWithUserAndBaguettes } from 'models/carts';
+import { BaguetteWithShop } from 'models/baguette';
+import { CartWithUser, CartWithUserAndBaguettes } from 'models/carts';
 import { FullUser } from 'models/users';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(Cart)
 export class CartRepository extends Repository<Cart> implements Carts {
-  async findOneEntity(id: number): Promise<CartWithBaguettes> {
-    const entity = await this.findOne({ where: { id }, relations: ['baguettes'] });
+  async findOneEntity(id: number): Promise<CartWithUserAndBaguettes> {
+    const entity = await this.findOne({ where: { id }, relations: ['baguettes', 'user'] });
 
     if (!entity) {
       throw new CartNotFoundError();
@@ -17,18 +17,22 @@ export class CartRepository extends Repository<Cart> implements Carts {
 
     console.log(entity);
 
-    return entity as unknown as CartWithBaguettes;
+    return entity as unknown as CartWithUserAndBaguettes;
   }
 
-  async createEntity(createEntity: CreateCart, baguettes: FullBaguette[], user: FullUser): Promise<CartWithBaguettes> {
-    return (await this.save(new Cart(user, baguettes))) as unknown as CartWithBaguettes;
+  async createEntity(
+    createEntity: CreateCart,
+    baguettes: BaguetteWithShop[],
+    user: FullUser,
+  ): Promise<CartWithUserAndBaguettes> {
+    return (await this.save(new Cart(user, baguettes))) as unknown as CartWithUserAndBaguettes;
   }
 
-  async findAllEntities(): Promise<CartWithUserAndBaguettes[]> {
-    return (await this.find({ relations: ['baguettes', 'user'] })) as unknown as CartWithUserAndBaguettes[];
+  async findAllEntities(): Promise<CartWithUser[]> {
+    return (await this.find({ relations: ['user'] })) as unknown as CartWithUser[];
   }
 
-  async updateEntity(id: number, baguettes: FullBaguette[]): Promise<CartWithBaguettes> {
+  async updateEntity(id: number, baguettes: BaguetteWithShop[]): Promise<CartWithUserAndBaguettes> {
     const entityToUpdate = await this.findOne({ where: { id }, relations: ['baguettes'] });
 
     if (!entityToUpdate) {
@@ -39,7 +43,10 @@ export class CartRepository extends Repository<Cart> implements Carts {
 
     await this.save(entityToUpdate);
 
-    return (await this.findOne({ where: { id }, relations: ['baguettes'] })) as unknown as CartWithBaguettes;
+    return (await this.findOne({
+      where: { id },
+      relations: ['baguettes', 'user'],
+    })) as unknown as CartWithUserAndBaguettes;
   }
 
   async deleteEntity(id: number): Promise<void> {

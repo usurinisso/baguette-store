@@ -19,6 +19,7 @@ import { ErrorStatus } from 'exception/error-status';
 import { UserNotFoundError } from 'exceptions/user-not-found';
 import { HttpErrorItem } from 'resources/http-error-item';
 import { User } from 'resources/user';
+import { UserExtended } from 'resources/user-extended';
 import { UserService } from 'services/user';
 import { CreateUserBody } from 'validators/user/createUserBody';
 import { UpdateUserBody } from 'validators/user/updateUserBody';
@@ -37,14 +38,14 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   @ErrorStatus(UserNotFoundError, HttpStatus.NOT_FOUND)
   async getOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return await this.usersService.findOneUser(id);
+    return UserExtended.from(await this.usersService.findOneUser(id));
   }
 
   @Get()
   @ApiResponse({ status: HttpStatus.OK, type: [User] })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   async getAll(): Promise<User[]> {
-    return await this.usersService.findAllUsers();
+    return (await this.usersService.findAllUsers()).map((user) => User.from(user));
   }
 
   @Post()
@@ -52,7 +53,7 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: HttpErrorItem })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   async post(@Body() user: CreateUserBody): Promise<User> {
-    return await this.usersService.createUser(user);
+    return User.from(await this.usersService.createUser(user));
   }
 
   @Patch('/:id')
@@ -62,8 +63,8 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
   @ErrorStatus(UserNotFoundError, HttpStatus.NOT_FOUND)
   @ApiBody({ type: UpdateUserBody })
-  async patch(@Param('id', ParseIntPipe) id: number, @Body() User: UpdateUserBody): Promise<User> {
-    return await this.usersService.updateUser(id, User);
+  async patch(@Param('id', ParseIntPipe) id: number, @Body() user: UpdateUserBody): Promise<User> {
+    return User.from(await this.usersService.updateUser(id, user));
   }
 
   @Delete('/:id')

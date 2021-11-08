@@ -1,9 +1,9 @@
-import { FullShop, ShopsWithBaguettes } from 'models/shops';
+import { FullShop } from 'models/shops';
 
 export interface Shops {
   findAllEntities(): Promise<FullShop[]>;
 
-  findOneEntity(shopId: number): Promise<ShopsWithBaguettes>;
+  findOneEntity(shopId: number): Promise<FullShop>;
 
   createEntity(shop: CreateShop): Promise<FullShop>;
 

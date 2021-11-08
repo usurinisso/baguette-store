@@ -42,7 +42,7 @@ export class BaguettesController {
     @Param('shopId', ParseIntPipe) shopId: number,
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Baguette> {
-    return await this.baguettesService.findOneBaguette(shopId, id);
+    return Baguette.from(await this.baguettesService.findOneBaguette(shopId, id));
   }
 
   @Get('/:shopId/baguettes')
@@ -51,7 +51,7 @@ export class BaguettesController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   @ErrorStatus(ShopNotFoundError, HttpStatus.NOT_FOUND)
   async getAll(@Param('shopId', ParseIntPipe) shopId: number): Promise<Baguette[]> {
-    return await this.baguettesService.findAllBaguettes(shopId);
+    return (await this.baguettesService.findAllBaguettes(shopId)).map(Baguette.from);
   }
 
   @Post('/:shopId/baguettes')
@@ -61,7 +61,7 @@ export class BaguettesController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   @ErrorStatus(ShopNotFoundError, HttpStatus.NOT_FOUND)
   async post(@Param('shopId', ParseIntPipe) shopId: number, @Body() baguette: CreateBaguetteBody): Promise<Baguette> {
-    return await this.baguettesService.createBaguette(shopId, baguette);
+    return Baguette.from(await this.baguettesService.createBaguette(shopId, baguette));
   }
 
   @Patch('/:shopId/baguettes/:id')
@@ -76,7 +76,7 @@ export class BaguettesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() baguette: UpdateBaguetteBody,
   ): Promise<Baguette> {
-    return await this.baguettesService.updateBaguette(shopId, id, baguette);
+    return Baguette.from(await this.baguettesService.updateBaguette(shopId, id, baguette));
   }
 
   @Delete('/:shopId/baguettes/:id')

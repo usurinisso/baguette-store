@@ -37,14 +37,14 @@ export class CartController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   @ErrorStatus(CartNotFoundError, HttpStatus.NOT_FOUND)
   async getOne(@Param('id', ParseIntPipe) id: number): Promise<Cart> {
-    return await this.cartsService.findOneCart(id);
+    return Cart.from(await this.cartsService.findOneCart(id));
   }
 
   @Get()
   @ApiResponse({ status: HttpStatus.OK, type: [Cart] })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   async getAll(): Promise<Cart[]> {
-    return await this.cartsService.findAllCarts();
+    return (await this.cartsService.findAllCarts()).map(Cart.from);
   }
 
   @Post()
@@ -52,7 +52,7 @@ export class CartController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: HttpErrorItem })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   async post(@Body() cart: CreateCartBody): Promise<Cart> {
-    return await this.cartsService.createCart(cart);
+    return Cart.from(await this.cartsService.createCart(cart));
   }
 
   @Patch('/:id')
@@ -62,8 +62,8 @@ export class CartController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
   @ErrorStatus(CartNotFoundError, HttpStatus.NOT_FOUND)
   @ApiBody({ type: UpdateCartBody })
-  async patch(@Param('id', ParseIntPipe) id: number, @Body() Cart: UpdateCartBody): Promise<Cart> {
-    return await this.cartsService.updateCart(id, Cart);
+  async patch(@Param('id', ParseIntPipe) id: number, @Body() cart: UpdateCartBody): Promise<Cart> {
+    return Cart.from(await this.cartsService.updateCart(id, cart));
   }
 
   @Delete('/:id')

@@ -1,19 +1,19 @@
 import { CreateShop, Shops, UpdateShop } from 'capabilities/shops';
 import { ShopNotFoundError } from 'exceptions/shop-not-found';
 import { Shop } from 'infrastructure/persistence/entities/shop.entity';
-import { FullShop, ShopsWithBaguettes } from 'models/shops';
+import { FullShop } from 'models/shops';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(Shop)
 export class ShopRepository extends Repository<Shop> implements Shops {
-  async findOneEntity(shopId: number): Promise<ShopsWithBaguettes> {
-    const shop = await this.findOne({ where: { id: shopId }, relations: ['baguettes'] });
+  async findOneEntity(shopId: number): Promise<FullShop> {
+    const shop = await this.findOne({ where: { id: shopId } });
 
     if (!shop) {
       throw new ShopNotFoundError();
     }
 
-    return shop as unknown as ShopsWithBaguettes;
+    return shop as unknown as FullShop;
   }
 
   async createEntity(shop: CreateShop): Promise<FullShop> {

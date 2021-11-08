@@ -3,6 +3,7 @@ import { Cart } from 'infrastructure/persistence/entities/cart.entity';
 import { Order } from 'infrastructure/persistence/entities/order.entity';
 import { BeforeInsert, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { RoleType } from 'types/roleType';
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -31,7 +32,9 @@ export class User {
 
   @OneToOne(() => Cart, (cart) => cart.user, {
     nullable: true,
-    cascade: ['insert', 'update', 'remove'],
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
+    orphanedRowAction: 'nullify',
   })
   @JoinColumn()
   cart?: Cart;

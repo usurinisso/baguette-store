@@ -37,14 +37,14 @@ export class OrdersController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   @ErrorStatus(OrderNotFoundError, HttpStatus.NOT_FOUND)
   async getOne(@Param('id', ParseIntPipe) id: number): Promise<Order> {
-    return await this.ordersService.findOneOrder(id);
+    return Order.from(await this.ordersService.findOneOrder(id));
   }
 
   @Get()
   @ApiResponse({ status: HttpStatus.OK, type: [Order] })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   async getAll(): Promise<Order[]> {
-    return await this.ordersService.findAllOrders();
+    return (await this.ordersService.findAllOrders()).map(Order.from);
   }
 
   @Post()
@@ -52,7 +52,7 @@ export class OrdersController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: HttpErrorItem })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   async post(@Body() order: CreateOrderBody): Promise<Order> {
-    return await this.ordersService.createOrder(order);
+    return Order.from(await this.ordersService.createOrder(order));
   }
 
   @Patch('/:id')
@@ -62,8 +62,8 @@ export class OrdersController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
   @ErrorStatus(OrderNotFoundError, HttpStatus.NOT_FOUND)
   @ApiBody({ type: UpdateOrderBody })
-  async patch(@Param('id', ParseIntPipe) id: number, @Body() Order: UpdateOrderBody): Promise<Order> {
-    return await this.ordersService.updateOrder(id, Order);
+  async patch(@Param('id', ParseIntPipe) id: number, @Body() order: UpdateOrderBody): Promise<Order> {
+    return Order.from(await this.ordersService.updateOrder(id, order));
   }
 
   @Delete('/:id')

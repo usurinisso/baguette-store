@@ -1,5 +1,5 @@
-import { BaguetteWithCartsAndShopAndOrder, FullBaguette } from 'models/baguette';
-import { FullUser, UserWithCartAndOrders } from 'models/users';
+import { FullBaguette } from 'models/baguette';
+import { FullUser } from 'models/users';
 
 export interface FullOrder {
   id: number;
@@ -14,11 +14,11 @@ export interface FullOrder {
 }
 
 export interface OrderWithBaguettes extends FullOrder {
-  baguettes: FullBaguette[];
+  baguettes?: FullBaguette[];
 }
 
 export interface OrderWithUser extends FullOrder {
-  user: FullUser;
+  user?: FullUser;
 }
 
 export type OrderWithBaguettesAndUser = OrderWithBaguettes & OrderWithUser;

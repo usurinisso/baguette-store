@@ -1,4 +1,4 @@
-import { BaguetteWithCartsAndShopAndOrder, FullBaguette } from 'models/baguette';
+import { BaguetteWithShop, FullBaguette } from 'models/baguette';
 import { FullShop } from 'models/shops';
 import { BaguetteCondition } from 'types/baguetteCondition';
 import { BaguetteType } from 'types/baguetteType';
@@ -16,7 +16,7 @@ export interface Baguettes {
 
   deleteEntity(shop: FullShop, id: number): Promise<void>;
 
-  findManyByIds(ids: number[]): Promise<BaguetteWithCartsAndShopAndOrder[]>;
+  findManyByIds(ids: number[]): Promise<BaguetteWithShop[]>;
 }
 
 export interface CreateBaguette {
