@@ -38,4 +38,10 @@ export class OrderService {
 
     return await this.orders.findAllEntities();
   }
+
+  async findAllUserOrders(id: number): Promise<FullOrder[]> {
+    this.logger.debug('Service findAllOrders()');
+
+    return await this.orders.findAllEntitiesByUser(id);
+  }
 }

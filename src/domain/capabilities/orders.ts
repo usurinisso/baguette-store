@@ -12,6 +12,8 @@ export interface Orders {
   updateEntity(id: number, updateEntity: UpdateOrder): Promise<FullOrder>;
 
   deleteEntity(id: number): Promise<void>;
+
+  findAllEntitiesByUser(id: number): Promise<FullOrder[]>;
 }
 
 export interface CreateOrder {

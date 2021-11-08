@@ -17,15 +17,19 @@ export class UserRepository extends Repository<User> implements Users {
     return entity as unknown as UserWithCartAndOrders;
   }
 
+  async findOneEntityByName(username: string): Promise<UserWithCartAndOrders> {
+    const entity = await this.findOne({ where: { userName: username }, relations: ['cart', 'orders'] });
+
+    if (!entity) {
+      throw new UserNotFoundError();
+    }
+
+    return entity as unknown as UserWithCartAndOrders;
+  }
+
   async createEntity(createEntity: CreateUser): Promise<FullUser> {
     return (await this.save(
-      new User(
-        createEntity.firstName,
-        createEntity.lastName,
-        createEntity.userName,
-        createEntity.password,
-        RoleType.admin,
-      ),
+      new User(createEntity.firstName, createEntity.lastName, createEntity.userName, createEntity.password),
     )) as unknown as FullUser;
   }
 

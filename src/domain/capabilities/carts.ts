@@ -1,5 +1,5 @@
 import { BaguetteWithShop } from 'models/baguette';
-import { CartWithUser, CartWithUserAndBaguettes } from 'models/carts';
+import { CartWithUser, CartWithUserAndBaguettes, FullCart } from 'models/carts';
 import { FullUser } from 'models/users';
 
 export interface Carts {
@@ -12,6 +12,8 @@ export interface Carts {
   ): Promise<CartWithUserAndBaguettes>;
 
   findAllEntities(): Promise<CartWithUser[]>;
+
+  findAllEntitiesByUser(id: number): Promise<FullCart[]>;
 
   updateEntity(id: number, baguettes: BaguetteWithShop[]): Promise<CartWithUserAndBaguettes>;
 

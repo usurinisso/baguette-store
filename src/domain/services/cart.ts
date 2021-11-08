@@ -3,7 +3,7 @@ import { Baguettes } from 'capabilities/baguettes';
 import { Carts, CreateCart, UpdateCart } from 'capabilities/carts';
 import { Users } from 'capabilities/users';
 import { CartNotFoundError } from 'exceptions/cart-not-found';
-import { CartWithUser, CartWithUserAndBaguettes } from 'models/carts';
+import { CartWithUser, CartWithUserAndBaguettes, FullCart } from 'models/carts';
 
 export class CartService {
   constructor(private readonly carts: Carts, private readonly baguettes: Baguettes, private readonly users: Users) {}
@@ -48,5 +48,11 @@ export class CartService {
     this.logger.debug('Service findAllCarts()');
 
     return await this.carts.findAllEntities();
+  }
+
+  async findAllCartsByUser(id: number): Promise<FullCart[]> {
+    this.logger.debug('Service findAllCartsByUser() id - ', id);
+
+    return await this.carts.findAllEntitiesByUser(id);
   }
 }

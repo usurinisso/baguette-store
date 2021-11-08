@@ -9,11 +9,15 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Request,
+  UnauthorizedException,
   UseFilters,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'auth/jwt-auth-guard';
 import { ApiErrorFilter } from 'exception/api-error-filter';
 import { ErrorStatus } from 'exception/error-status';
 import { BaguetteNotFoundError } from 'exceptions/baguette-not-found';
@@ -21,6 +25,7 @@ import { ShopNotFoundError } from 'exceptions/shop-not-found';
 import { Baguette } from 'resources/baguette';
 import { HttpErrorItem } from 'resources/http-error-item';
 import { BaguetteService } from 'services/baguette';
+import { RoleType } from 'types/roleType';
 import { CreateBaguetteBody } from 'validators/baguette/createBaguetteBody';
 import { UpdateBaguetteBody } from 'validators/baguette/updateBaguetteBody';
 
@@ -60,8 +65,20 @@ export class BaguettesController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   @ErrorStatus(ShopNotFoundError, HttpStatus.NOT_FOUND)
-  async post(@Param('shopId', ParseIntPipe) shopId: number, @Body() baguette: CreateBaguetteBody): Promise<Baguette> {
-    return Baguette.from(await this.baguettesService.createBaguette(shopId, baguette));
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async post(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    @Request() req,
+    @Param('shopId', ParseIntPipe) shopId: number,
+    @Body() baguette: CreateBaguetteBody,
+  ): Promise<Baguette> {
+    if (req.user.role === RoleType.admin || req.user.role === RoleType.vendor) {
+      return Baguette.from(await this.baguettesService.createBaguette(shopId, baguette));
+    } else {
+      throw new UnauthorizedException();
+    }
   }
 
   @Patch('/:shopId/baguettes/:id')
@@ -71,12 +88,21 @@ export class BaguettesController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
   @ErrorStatus(BaguetteNotFoundError, HttpStatus.NOT_FOUND)
   @ErrorStatus(ShopNotFoundError, HttpStatus.NOT_FOUND)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   async patch(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    @Request() req,
     @Param('shopId', ParseIntPipe) shopId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() baguette: UpdateBaguetteBody,
   ): Promise<Baguette> {
-    return Baguette.from(await this.baguettesService.updateBaguette(shopId, id, baguette));
+    if (req.user.role === RoleType.admin || req.user.role === RoleType.vendor) {
+      return Baguette.from(await this.baguettesService.updateBaguette(shopId, id, baguette));
+    } else {
+      throw new UnauthorizedException();
+    }
   }
 
   @Delete('/:shopId/baguettes/:id')
@@ -86,7 +112,19 @@ export class BaguettesController {
   @ErrorStatus(BaguetteNotFoundError, HttpStatus.NOT_FOUND)
   @ErrorStatus(ShopNotFoundError, HttpStatus.NOT_FOUND)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param('shopId', ParseIntPipe) shopId: number, @Param('id', ParseIntPipe) id: number): Promise<void> {
-    await this.baguettesService.deleteBaguette(shopId, id);
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async delete(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    @Request() req,
+    @Param('shopId', ParseIntPipe) shopId: number,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<void> {
+    if (req.user.role === RoleType.admin || req.user.role === RoleType.vendor) {
+      await this.baguettesService.deleteBaguette(shopId, id);
+    } else {
+      throw new UnauthorizedException();
+    }
   }
 }

@@ -2,7 +2,7 @@ import { Carts, CreateCart } from 'capabilities/carts';
 import { CartNotFoundError } from 'exceptions/cart-not-found';
 import { Cart } from 'infrastructure/persistence/entities/cart.entity';
 import { BaguetteWithShop } from 'models/baguette';
-import { CartWithUser, CartWithUserAndBaguettes } from 'models/carts';
+import { CartWithUser, CartWithUserAndBaguettes, FullCart } from 'models/carts';
 import { FullUser } from 'models/users';
 import { EntityRepository, Repository } from 'typeorm';
 
@@ -14,8 +14,6 @@ export class CartRepository extends Repository<Cart> implements Carts {
     if (!entity) {
       throw new CartNotFoundError();
     }
-
-    console.log(entity);
 
     return entity as unknown as CartWithUserAndBaguettes;
   }
@@ -30,6 +28,16 @@ export class CartRepository extends Repository<Cart> implements Carts {
 
   async findAllEntities(): Promise<CartWithUser[]> {
     return (await this.find({ relations: ['user'] })) as unknown as CartWithUser[];
+  }
+
+  async findAllEntitiesByUser(id: number): Promise<FullCart[]> {
+    return (await this.find({
+      where: {
+        user: {
+          id,
+        },
+      },
+    })) as unknown as FullCart[];
   }
 
   async updateEntity(id: number, baguettes: BaguetteWithShop[]): Promise<CartWithUserAndBaguettes> {

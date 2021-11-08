@@ -1,8 +1,13 @@
 import { Abstract, FactoryProvider, Module } from '@nestjs/common';
 import { Type } from '@nestjs/common/interfaces/type.interface';
 import { ConfigModule } from '@nestjs/config';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BaguettesController } from 'api/controllers/baguettes.controller';
+import { AuthService } from 'auth/auth-service';
+import { JwtStrategy } from 'auth/jwt-strategy';
+import { LocalStrategy } from 'auth/local-strategy';
 import { CartController } from 'controllers/cart.controller';
 import { OrdersController } from 'controllers/order.controller';
 import { ShopController } from 'controllers/shop.controller';
@@ -23,6 +28,11 @@ import { UserService } from 'services/user';
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(),
     TypeOrmModule.forFeature([BaguetteRepository, ShopRepository, CartRepository, UserRepository, OrderRepository]),
+    PassportModule,
+    JwtModule.register({
+      secret: 'XYZ00ZHHSjakshds124123431',
+      signOptions: { expiresIn: '2 days' },
+    }),
   ],
   providers: [
     factory(BaguetteService, [BaguetteRepository, ShopService]),
@@ -30,6 +40,9 @@ import { UserService } from 'services/user';
     factory(CartService, [CartRepository, BaguetteRepository, UserRepository]),
     factory(OrderService, [OrderRepository, BaguetteRepository, UserRepository]),
     factory(UserService, [UserRepository]),
+    factory(LocalStrategy, [AuthService]),
+    factory(AuthService, [UserService, JwtService]),
+    JwtStrategy,
   ],
   controllers: [ShopController, BaguettesController, UsersController, OrdersController, CartController],
 })

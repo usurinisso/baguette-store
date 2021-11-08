@@ -10,6 +10,8 @@ export interface Users {
   deleteEntity(id: number): Promise<void>;
 
   updateEntity(id: number, updateEntity: UpdateUser): Promise<FullUser>;
+
+  findOneEntityByName(username: string): Promise<UserWithCartAndOrders>;
 }
 
 export interface CreateUser {

@@ -29,6 +29,11 @@ export class UserService {
     return await this.users.findOneEntity(id);
   }
 
+  async findOneByName(username: string): Promise<UserWithCartAndOrders> {
+    this.logger.debug('Service findOneEntityByName() username - ' + username);
+    return await this.users.findOneEntityByName(username);
+  }
+
   async findAllUsers(): Promise<FullUser[]> {
     this.logger.debug('Service findAllUsers()');
 

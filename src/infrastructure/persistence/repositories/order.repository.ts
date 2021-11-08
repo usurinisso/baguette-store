@@ -33,6 +33,11 @@ export class OrderRepository extends Repository<Order> implements Orders {
     return (await this.find({ relations: ['user'] })) as unknown as OrderWithUser[];
   }
 
+  async findAllEntitiesByUser(id: number): Promise<FullOrder[]> {
+    console.log(id);
+    return (await this.find({ where: { user: { id } } })) as unknown as FullOrder[];
+  }
+
   async updateEntity(id: number, updateEntity: UpdateOrder): Promise<FullOrder> {
     const entityToUpdate = await this.findOne(id);
 

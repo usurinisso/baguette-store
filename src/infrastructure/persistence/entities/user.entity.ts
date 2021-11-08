@@ -15,13 +15,13 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column()
+  @Column({ unique: true })
   userName: string;
 
   @Column()
   password: string;
 
-  @Column('enum', { default: RoleType.guest, enum: RoleType })
+  @Column('enum', { enum: RoleType, default: String(RoleType.vendor) })
   role: RoleType;
 
   @OneToMany(() => Order, (order) => order.user, {
@@ -49,7 +49,7 @@ export class User {
     lastName: string,
     userName: string,
     password: string,
-    role: RoleType,
+    role?: RoleType,
     orders?: Order[],
     cart?: Cart,
   ) {
