@@ -1,7 +1,16 @@
 import * as bcrypt from 'bcrypt';
 import { Cart } from 'infrastructure/persistence/entities/cart.entity';
 import { Order } from 'infrastructure/persistence/entities/order.entity';
-import { BeforeInsert, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { RoleType } from 'types/roleType';
 
 @Entity()
@@ -40,6 +49,7 @@ export class User {
   cart?: Cart;
 
   @BeforeInsert()
+  @BeforeUpdate()
   async hashPassword(): Promise<void> {
     this.password = await bcrypt.hash(this.password, 10);
   }
