@@ -21,7 +21,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column('enum', { enum: RoleType, default: String(RoleType.vendor) })
+  @Column('enum', { enum: RoleType, default: String(RoleType.guest) })
   role: RoleType;
 
   @OneToMany(() => Order, (order) => order.user, {
