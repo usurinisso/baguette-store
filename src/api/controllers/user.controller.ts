@@ -39,6 +39,22 @@ import { UpdateUserBody } from 'validators/user/updateUserBody';
 export class UsersController {
   constructor(private readonly usersService: UserService, private readonly authService: AuthService) {}
 
+  @Get('/profile')
+  @ApiResponse({ status: HttpStatus.OK, type: User })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: HttpErrorItem })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
+  @ErrorStatus(UserNotFoundError, HttpStatus.NOT_FOUND)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async getProfile(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    @Request() req,
+  ): Promise<User> {
+    return UserExtended.from(await this.usersService.findOneUser(req.user.userId));
+  }
+
   @Get('/:id')
   @ApiResponse({ status: HttpStatus.OK, type: User })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
@@ -58,22 +74,6 @@ export class UsersController {
     } else {
       throw new UnauthorizedException();
     }
-  }
-
-  @Get('/profile')
-  @ApiResponse({ status: HttpStatus.OK, type: User })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: HttpErrorItem })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
-  @ErrorStatus(UserNotFoundError, HttpStatus.NOT_FOUND)
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  async getProfile(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    @Request() req,
-  ): Promise<User> {
-    return UserExtended.from(await this.usersService.findOneUser(req.user.userId));
   }
 
   @Get()
