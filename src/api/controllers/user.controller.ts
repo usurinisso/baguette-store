@@ -46,6 +46,7 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   @ErrorStatus(UserNotFoundError, HttpStatus.NOT_FOUND)
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   async getOne(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -66,6 +67,7 @@ export class UsersController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   @ErrorStatus(UserNotFoundError, HttpStatus.NOT_FOUND)
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   async getProfile(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
