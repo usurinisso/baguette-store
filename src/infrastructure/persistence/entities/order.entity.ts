@@ -1,7 +1,7 @@
 import { Baguette } from 'infrastructure/persistence/entities/baguette.entity';
 import { User } from 'infrastructure/persistence/entities/user.entity';
-import { FullBaguette } from 'models/baguette';
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+
 @Entity()
 export class Order {
   @PrimaryGeneratedColumn()
@@ -22,7 +22,7 @@ export class Order {
   @ManyToOne(() => User, (user) => user.orders, {
     nullable: false,
     onDelete: 'CASCADE',
-    orphanedRowAction: 'delete',
+    onUpdate: 'CASCADE',
   })
   user: User;
 
@@ -30,9 +30,9 @@ export class Order {
     nullable: true,
     cascade: ['insert', 'update', 'remove'],
   })
-  baguettes: FullBaguette[];
+  baguettes?: Baguette[];
 
-  constructor(deliveryAddress: string, deliveryInfo: string, price: number, user: User, baguettes: FullBaguette[]) {
+  constructor(deliveryAddress: string, deliveryInfo: string, price: number, user: User, baguettes?: Baguette[]) {
     this.deliveryAddress = deliveryAddress;
     this.deliveryInfo = deliveryInfo;
     this.price = price;

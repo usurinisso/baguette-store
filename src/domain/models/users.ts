@@ -1,5 +1,5 @@
-import { CartWithUserAndBaguettes, FullCart } from 'models/carts';
-import { FullOrder, OrderWithBaguettesAndUser } from 'models/orders';
+import { FullCart } from 'models/carts';
+import { FullOrder } from 'models/orders';
 import { RoleType } from 'types/roleType';
 
 export interface FullUser {

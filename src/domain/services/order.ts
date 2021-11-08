@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { Baguettes } from 'capabilities/baguettes';
 import { CreateOrder, Orders, UpdateOrder } from 'capabilities/orders';
 import { Users } from 'capabilities/users';
-import { FullOrder, OrderWithBaguettes, OrderWithBaguettesAndUser } from 'models/orders';
+import { FullOrder, OrderWithBaguettes, OrderWithBaguettesAndUser, OrderWithUser } from 'models/orders';
 
 export class OrderService {
   constructor(private readonly orders: Orders, private readonly baguettes: Baguettes, private readonly users: Users) {}
@@ -23,17 +23,17 @@ export class OrderService {
   async createOrder(order: CreateOrder): Promise<OrderWithBaguettes> {
     this.logger.debug('Service createOrder()');
     const baguettesToOrder = await this.baguettes.findManyByIds(order.baguetteIds);
-    const user = await this.users.findOneEntity(order.userId);
+    const { cart, orders, ...user } = await this.users.findOneEntity(order.userId);
 
     return await this.orders.createEntity(order, baguettesToOrder, user);
   }
 
-  async findOneOrder(id: number): Promise<OrderWithBaguettes> {
+  async findOneOrder(id: number): Promise<OrderWithBaguettesAndUser> {
     this.logger.debug('Service findOneOrder() id - ' + id);
     return await this.orders.findOneEntity(id);
   }
 
-  async findAllOrders(): Promise<OrderWithBaguettesAndUser[]> {
+  async findAllOrders(): Promise<OrderWithUser[]> {
     this.logger.debug('Service findAllOrders()');
 
     return await this.orders.findAllEntities();

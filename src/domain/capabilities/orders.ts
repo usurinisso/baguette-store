@@ -1,17 +1,13 @@
-import { BaguetteWithCartsAndShopAndOrder } from 'models/baguette';
-import { FullOrder, OrderWithBaguettes, OrderWithBaguettesAndUser } from 'models/orders';
-import { UserWithCartAndOrders } from 'models/users';
+import { BaguetteWithShop } from 'models/baguette';
+import { FullOrder, OrderWithBaguettes, OrderWithBaguettesAndUser, OrderWithUser } from 'models/orders';
+import { FullUser } from 'models/users';
 
 export interface Orders {
-  findAllEntities(): Promise<OrderWithBaguettesAndUser[]>;
+  findAllEntities(): Promise<OrderWithUser[]>;
 
-  findOneEntity(id: number): Promise<OrderWithBaguettes>;
+  findOneEntity(id: number): Promise<OrderWithBaguettesAndUser>;
 
-  createEntity(
-    createEntity: CreateOrder,
-    baguettes: BaguetteWithCartsAndShopAndOrder[],
-    user: UserWithCartAndOrders,
-  ): Promise<OrderWithBaguettes>;
+  createEntity(createEntity: CreateOrder, baguettes: BaguetteWithShop[], user: FullUser): Promise<OrderWithBaguettes>;
 
   updateEntity(id: number, updateEntity: UpdateOrder): Promise<FullOrder>;
 

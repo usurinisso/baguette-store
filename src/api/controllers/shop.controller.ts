@@ -37,14 +37,14 @@ export class ShopController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   @ErrorStatus(ShopNotFoundError, HttpStatus.NOT_FOUND)
   async getOne(@Param('id', ParseIntPipe) id: number): Promise<Shop> {
-    return await this.shopsService.findOneShop(id);
+    return Shop.from(await this.shopsService.findOneShop(id));
   }
 
   @Get()
   @ApiResponse({ status: HttpStatus.OK, type: [Shop] })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   async getAll(): Promise<Shop[]> {
-    return await this.shopsService.findAllShops();
+    return (await this.shopsService.findAllShops()).map((shop) => Shop.from(shop));
   }
 
   @Post()
@@ -52,7 +52,7 @@ export class ShopController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: HttpErrorItem })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: HttpErrorItem })
   async post(@Body() shop: CreateShopBody): Promise<Shop> {
-    return await this.shopsService.createShop(shop);
+    return Shop.from(await this.shopsService.createShop(shop));
   }
 
   @Patch('/:id')
@@ -62,8 +62,8 @@ export class ShopController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: HttpErrorItem })
   @ErrorStatus(ShopNotFoundError, HttpStatus.NOT_FOUND)
   @ApiBody({ type: UpdateShopBody })
-  async patch(@Param('id', ParseIntPipe) id: number, @Body() Shop: UpdateShopBody): Promise<Shop> {
-    return await this.shopsService.updateShop(id, Shop);
+  async patch(@Param('id', ParseIntPipe) id: number, @Body() shop: UpdateShopBody): Promise<Shop> {
+    return Shop.from(await this.shopsService.updateShop(id, shop));
   }
 
   @Delete('/:id')

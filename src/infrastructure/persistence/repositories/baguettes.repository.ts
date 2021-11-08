@@ -1,6 +1,6 @@
 import { Baguettes, CreateBaguette, UpdateBaguette } from 'capabilities/baguettes';
 import { BaguetteNotFoundError } from 'exceptions/baguette-not-found';
-import { BaguetteWithCartsAndShopAndOrder, FullBaguette } from 'models/baguette';
+import { BaguetteWithShop, FullBaguette } from 'models/baguette';
 import { FullShop } from 'models/shops';
 import { EntityRepository, In, Repository } from 'typeorm';
 
@@ -12,11 +12,11 @@ export class BaguetteRepository extends Repository<Baguette> implements Baguette
     return await this.find({ where: { shop, order: null } });
   }
 
-  async findManyByIds(ids: number[]): Promise<BaguetteWithCartsAndShopAndOrder[]> {
-    return (await this.find({
+  async findManyByIds(ids: number[]): Promise<BaguetteWithShop[]> {
+    return await this.find({
       where: { id: In(ids) },
-      relations: ['carts', 'shop', 'order'],
-    })) as unknown as BaguetteWithCartsAndShopAndOrder[];
+      relations: ['shop'],
+    });
   }
 
   async findOneEntity(shop: FullShop, id: number): Promise<FullBaguette> {

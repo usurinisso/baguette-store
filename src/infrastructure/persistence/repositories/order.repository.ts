@@ -1,26 +1,26 @@
 import { CreateOrder, Orders, UpdateOrder } from 'capabilities/orders';
 import { OrderNotFoundError } from 'exceptions/order-not-found';
 import { Order } from 'infrastructure/persistence/entities/order.entity';
-import { FullBaguette } from 'models/baguette';
-import { FullOrder, OrderWithBaguettes, OrderWithBaguettesAndUser } from 'models/orders';
+import { BaguetteWithShop } from 'models/baguette';
+import { FullOrder, OrderWithBaguettes, OrderWithBaguettesAndUser, OrderWithUser } from 'models/orders';
 import { FullUser } from 'models/users';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(Order)
 export class OrderRepository extends Repository<Order> implements Orders {
-  async findOneEntity(id: number): Promise<OrderWithBaguettes> {
+  async findOneEntity(id: number): Promise<OrderWithBaguettesAndUser> {
     const entity = await this.findOne({ where: { id }, relations: ['baguettes'] });
 
     if (!entity) {
       throw new OrderNotFoundError();
     }
 
-    return entity as unknown as OrderWithBaguettes;
+    return entity as unknown as OrderWithBaguettesAndUser;
   }
 
   async createEntity(
     createEntity: CreateOrder,
-    baguettes: FullBaguette[],
+    baguettes: BaguetteWithShop[],
     user: FullUser,
   ): Promise<OrderWithBaguettes> {
     const price = baguettes.map((x) => x.price).reduce((a, b) => Number(a) + Number(b));
@@ -29,8 +29,8 @@ export class OrderRepository extends Repository<Order> implements Orders {
     )) as unknown as OrderWithBaguettes;
   }
 
-  async findAllEntities(): Promise<OrderWithBaguettesAndUser[]> {
-    return (await this.find({ relations: ['baguettes', 'user'] })) as unknown as OrderWithBaguettesAndUser[];
+  async findAllEntities(): Promise<OrderWithUser[]> {
+    return (await this.find({ relations: ['user'] })) as unknown as OrderWithUser[];
   }
 
   async updateEntity(id: number, updateEntity: UpdateOrder): Promise<FullOrder> {
@@ -50,12 +50,12 @@ export class OrderRepository extends Repository<Order> implements Orders {
   }
 
   async deleteEntity(id: number): Promise<void> {
-    const entityToDelete = await this.findOne(id);
+    const { baguettes, ...entityToDelete } = await this.findOne(id);
 
     if (!entityToDelete) {
       throw new OrderNotFoundError();
     }
 
-    await this.delete(id);
+    await this.remove(entityToDelete);
   }
 }

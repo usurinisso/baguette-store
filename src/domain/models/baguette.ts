@@ -2,7 +2,7 @@ import { Cart } from 'infrastructure/persistence/entities/cart.entity';
 import { Order } from 'infrastructure/persistence/entities/order.entity';
 import { Shop } from 'infrastructure/persistence/entities/shop.entity';
 import { DateTime } from 'luxon';
-import { CartWithUserAndBaguettes, FullCart } from 'models/carts';
+import { FullCart } from 'models/carts';
 import { FullOrder } from 'models/orders';
 import { FullShop } from 'models/shops';
 import { BaguetteCondition } from 'types/baguetteCondition';
@@ -29,7 +29,7 @@ export interface BaguetteWithCarts extends FullBaguette {
 }
 
 export interface BaguetteWithShop extends FullBaguette {
-  shop?: FullShop;
+  shop: FullShop;
 }
 
 export interface BaguetteWithOrder extends FullBaguette {

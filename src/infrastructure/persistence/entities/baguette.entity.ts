@@ -31,21 +31,21 @@ export class Baguette {
   @ManyToOne(() => Shop, (shop) => shop.baguettes, {
     nullable: false,
     onDelete: 'CASCADE',
-    orphanedRowAction: 'delete',
+    onUpdate: 'CASCADE',
   })
   shop: Shop;
 
   @ManyToOne(() => Order, (order) => order.baguettes, {
     nullable: true,
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
     orphanedRowAction: 'nullify',
   })
   order?: Order;
 
   @ManyToMany(() => Cart, (cart) => cart.baguettes, {
     nullable: true,
-    onDelete: 'CASCADE',
-    orphanedRowAction: 'delete',
+    cascade: ['insert', 'update', 'remove'],
   })
   @JoinTable()
   carts?: Cart[];

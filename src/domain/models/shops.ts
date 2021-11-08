@@ -1,4 +1,3 @@
-import { BaguetteWithCartsAndShopAndOrder, FullBaguette } from 'models/baguette';
 export interface FullShop {
   id: number;
 
@@ -9,8 +8,4 @@ export interface FullShop {
   workHours: string;
 
   shopImage: string;
-}
-
-export interface ShopsWithBaguettes extends FullShop {
-  baguettes?: FullBaguette[];
 }

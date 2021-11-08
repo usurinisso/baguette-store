@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { CreateShop, Shops, UpdateShop } from 'capabilities/shops';
-import { FullShop, ShopsWithBaguettes } from 'models/shops';
+import { FullShop } from 'models/shops';
 
 export class ShopService {
   constructor(private readonly shops: Shops) {}
@@ -24,7 +24,7 @@ export class ShopService {
     return await this.shops.createEntity(shop);
   }
 
-  async findOneShop(id: number): Promise<ShopsWithBaguettes> {
+  async findOneShop(id: number): Promise<FullShop> {
     this.logger.debug('Service findOneShop() id - ' + id);
     return await this.shops.findOneEntity(id);
   }
