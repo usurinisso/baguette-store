@@ -1,6 +1,6 @@
 import { Baguette } from 'infrastructure/persistence/entities/baguette.entity';
 import { User } from 'infrastructure/persistence/entities/user.entity';
-import { Entity, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, JoinColumn, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Cart {
@@ -10,6 +10,7 @@ export class Cart {
   @OneToOne(() => User, (user) => user.cart, {
     nullable: false,
   })
+  @JoinColumn()
   user: User;
 
   @ManyToMany(() => Baguette, (baguette) => baguette.carts, {

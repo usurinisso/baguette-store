@@ -45,7 +45,6 @@ export class User {
     onUpdate: 'CASCADE',
     orphanedRowAction: 'nullify',
   })
-  @JoinColumn()
   cart?: Cart;
 
   @BeforeInsert()
