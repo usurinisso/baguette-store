@@ -13,7 +13,10 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  app.enableCors({ origin: '*', credentials: false });
+  app.enableCors({
+    origin: 'https://baguette-store-web.herokuapp.com',
+    credentials: true,
+  });
   await app.listen(process.env.PORT || 3000);
 }
 
