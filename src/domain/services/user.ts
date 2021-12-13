@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { CreateUser, UpdateUser, Users } from 'capabilities/users';
+import { UserInUseError } from 'exceptions/user-in-use';
 import { FullUser, UserWithCartAndOrders } from 'models/users';
 
 export class UserService {
@@ -20,8 +21,14 @@ export class UserService {
 
   async createUser(user: CreateUser): Promise<FullUser> {
     this.logger.debug('Service createUser()');
-
-    return await this.users.createEntity(user);
+    try {
+      const existing = await this.users.findOneEntityByName(user.userName);
+      if (existing) {
+        throw new UserInUseError();
+      }
+    } catch (err) {
+      return await this.users.createEntity(user);
+    }
   }
 
   async findOneUser(id: number): Promise<UserWithCartAndOrders> {

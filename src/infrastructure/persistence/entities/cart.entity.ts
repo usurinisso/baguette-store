@@ -17,6 +17,7 @@ export class Cart {
     nullable: true,
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
+    eager: true,
     orphanedRowAction: 'delete',
   })
   baguettes?: Baguette[];

@@ -55,6 +55,7 @@ export class CartController {
       req.user.role === RoleType.admin ||
       req.user.role === RoleType.vendor
     ) {
+      console.log(await this.cartsService.findOneCart(id));
       return Cart.from(await this.cartsService.findOneCart(id));
     } else {
       throw new UnauthorizedException();
